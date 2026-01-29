@@ -31,6 +31,10 @@ public class Fracture : MonoBehaviour
         GenerateFracturePoints();
         ComputeVoronoiCells();
 
+        for(int i = 0; i < voronoiCells.Count; i++)
+        {
+            CreateMeshFromCell(voronoiCells[i]);
+        }
     }
 
     void GenerateFracturePoints()
@@ -155,6 +159,39 @@ public class Fracture : MonoBehaviour
         return p1 + dir * t;
     }
 
+    void CreateMeshFromCell(List<Vector2> cell)
+    {
+        Mesh mesh = new Mesh();
+        Vector3[] vertices = new Vector3[cell.Count];
+        int[] triangles = new int[(cell.Count - 2) * 3];
+
+        for (int i = 0; i < cell.Count; i++)
+        {
+            vertices[i] = cell[i];
+        }
+
+        for (int i = 0; i < cell.Count - 2; i++)
+        {
+            triangles[i * 3] = 0;
+            triangles[i * 3 + 1] = i + 1;
+            triangles[i * 3 + 2] = i + 2;
+        }
+        
+        mesh.vertices = vertices;
+        mesh.triangles = triangles;
+
+        mesh.RecalculateNormals();
+        mesh.RecalculateBounds();
+
+        GameObject cellObj = new GameObject("FractureCell");
+        MeshFilter mf = cellObj.AddComponent<MeshFilter>();
+        MeshRenderer mr = cellObj.AddComponent<MeshRenderer>();
+        
+        cellObj.transform.position = transform.position;
+        mf.mesh = mesh;
+        mr.material = GetComponent<SpriteRenderer>().material;
+        mr.enabled = true;
+    }
 
     void OnDrawGizmos()
     {
