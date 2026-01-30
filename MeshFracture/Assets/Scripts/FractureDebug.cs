@@ -24,28 +24,14 @@ public class FractureDebug : MonoBehaviour
     {
         // Points Voronoï
         Gizmos.color = Color.red;
-        Vector3 p = fracturePoint;
-
-        p.x += transform.position.x;
-        p.y += transform.position.y;
-        p.z += transform.position.z;
-
-        Gizmos.DrawSphere(p, sphereSize);
+        Gizmos.DrawSphere(transform.TransformPoint(fracturePoint), sphereSize);
 
         // Cellules
         Gizmos.color = Color.green;
         for (int i = 0; i < voronoiCell.Count; i++)
         {
-            Vector3 a = voronoiCell[i];
-            Vector3 b = voronoiCell[(i + 1) % voronoiCell.Count];
-
-            a.x += transform.position.x;
-            a.y += transform.position.y;
-            a.z += transform.position.z;
-
-            b.x += transform.position.x;
-            b.y += transform.position.y;
-            b.z += transform.position.z;
+            Vector3 a = transform.TransformPoint(voronoiCell[i]);
+            Vector3 b = transform.TransformPoint(voronoiCell[(i + 1) % voronoiCell.Count]);
 
             Gizmos.DrawLine(a, b);
         }
