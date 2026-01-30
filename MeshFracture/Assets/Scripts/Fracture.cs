@@ -17,16 +17,20 @@ public class Fracture : MonoBehaviour
     private List<Vector2> fracturePoints = new List<Vector2>();
     private List<List<Vector2>> voronoiCells = new List<List<Vector2>>();
 
-    void Start()
+    protected void FractureNow()
     {
-        if(randomPoints)
-        {
-            int seed = Random.Range(int.MinValue, int.MaxValue);
-            Random.InitState(seed);
-        }
-        else
-            Random.InitState(randomSeed);
+        meshCreated = 0;
 
+        GetSpritePolygons();
+        GenerateFracturePoints();
+        ComputeVoronoiCells();
+        GenerateFracturesMeshes();
+
+        Destroy(gameObject);
+    }
+
+    void GetSpritePolygons()
+    {
         sprite = GetComponent<SpriteRenderer>().sprite;
         sprite.GetPhysicsShape(0, spritePolygon);
 
@@ -38,10 +42,6 @@ public class Fracture : MonoBehaviour
                 spritePolygon[i].y * scale.y
             );
         }
-
-        GenerateFracturePoints();
-        ComputeVoronoiCells();
-        GenerateFracturesMeshes();
     }
 
     void GenerateFracturePoints()
@@ -49,6 +49,14 @@ public class Fracture : MonoBehaviour
         fracturePoints.Clear();
 
         Bounds localBounds = ComputeLocalBounds(spritePolygon);
+
+        if (randomPoints)
+        {
+            int seed = Random.Range(int.MinValue, int.MaxValue);
+            Random.InitState(seed);
+        }
+        else
+            Random.InitState(randomSeed);
 
         while (fracturePoints.Count < fractureCount)
         {

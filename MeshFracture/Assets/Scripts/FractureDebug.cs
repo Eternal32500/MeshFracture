@@ -22,7 +22,7 @@ public class FractureDebug : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        // Points Voronoï
+        //  Voronoi Points
         Gizmos.color = Color.red;
         Gizmos.DrawSphere(transform.TransformPoint(fracturePoint), sphereSize);
 
