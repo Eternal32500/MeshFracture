@@ -216,8 +216,16 @@ public class Fracture : MonoBehaviour
     {
         // Points Voronoï
         Gizmos.color = Color.red;
-        foreach (Vector2 p in fracturePoints)
-            Gizmos.DrawSphere(p, 0.01f);
+        foreach (Vector3 p in fracturePoints)
+        {
+            Vector3 v = p;
+
+            v.x += transform.position.x;
+            v.y += transform.position.y;
+            v.z += transform.position.z;
+
+            Gizmos.DrawSphere(v, 0.02f);
+        }
 
         // Cellules
         Gizmos.color = Color.green;
@@ -225,8 +233,17 @@ public class Fracture : MonoBehaviour
         {
             for (int i = 0; i < cell.Count; i++)
             {
-                Vector2 a = cell[i];
-                Vector2 b = cell[(i + 1) % cell.Count];
+                Vector3 a = cell[i];
+                Vector3 b = cell[(i + 1) % cell.Count];
+
+                a.x += transform.position.x;
+                a.y += transform.position.y;
+                a.z += transform.position.z;
+
+                b.x += transform.position.x;
+                b.y += transform.position.y;
+                b.z += transform.position.z;
+
                 Gizmos.DrawLine(a, b);
             }
         }
