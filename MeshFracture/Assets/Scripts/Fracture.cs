@@ -205,6 +205,10 @@ public class Fracture : MonoBehaviour
 
         cellObj.transform.parent = fracturedParent.transform;
 
+        PolygonCollider2D col = cellObj.AddComponent<PolygonCollider2D>();
+        col.SetPath(0, cell);
+        cellObj.AddComponent<Rigidbody2D>();
+
         meshCreated++;
     }
 
