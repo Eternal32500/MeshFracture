@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
@@ -11,6 +12,7 @@ public class Fracture : MonoBehaviour
 
     private Sprite sprite;
 
+    private GameObject fracturedParent;
     private List<Vector2> spritePolygon = new List<Vector2>();
     private List<Vector2> fracturePoints = new List<Vector2>();
     private List<List<Vector2>> voronoiCells = new List<List<Vector2>>();
@@ -28,13 +30,18 @@ public class Fracture : MonoBehaviour
         sprite = GetComponent<SpriteRenderer>().sprite;
         sprite.GetPhysicsShape(0, spritePolygon);
 
+        Vector3 scale = transform.localScale;
+        for (int i = 0; i < spritePolygon.Count; i++)
+        {
+            spritePolygon[i] = new Vector2(
+                spritePolygon[i].x * scale.x,
+                spritePolygon[i].y * scale.y
+            );
+        }
+
         GenerateFracturePoints();
         ComputeVoronoiCells();
-
-        for(int i = 0; i < voronoiCells.Count; i++)
-        {
-            CreateMeshFromCell(voronoiCells[i]);
-        }
+        GenerateFracturesMeshes();
     }
 
     void GenerateFracturePoints()
@@ -191,6 +198,18 @@ public class Fracture : MonoBehaviour
         mf.mesh = mesh;
         mr.material = GetComponent<SpriteRenderer>().material;
         mr.enabled = true;
+
+        cellObj.transform.parent = fracturedParent.transform;
+    }
+
+    void GenerateFracturesMeshes()
+    {
+        fracturedParent = new GameObject("FracturedGameObject");
+
+        for (int i = 0; i < voronoiCells.Count; i++)
+        {
+            CreateMeshFromCell(voronoiCells[i]);
+        }
     }
 
     void OnDrawGizmos()
