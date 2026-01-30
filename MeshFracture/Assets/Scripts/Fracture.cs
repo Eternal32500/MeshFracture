@@ -1,16 +1,16 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
 public class Fracture : MonoBehaviour
 {
     [Header("Fracture Settings")]
-    public bool randomPoints = true;
-    public int fractureCount = 8;
-    public int randomSeed = 0;
+    [SerializeField] private bool randomPoints = true;
+    [SerializeField] private int fractureCount = 10;
+    [SerializeField] private int randomSeed = 0;
 
     private Sprite sprite;
+    private int meshCreated = 0;
 
     private GameObject fracturedParent;
     private List<Vector2> spritePolygon = new List<Vector2>();
@@ -193,13 +193,19 @@ public class Fracture : MonoBehaviour
         GameObject cellObj = new GameObject("FractureCell");
         MeshFilter mf = cellObj.AddComponent<MeshFilter>();
         MeshRenderer mr = cellObj.AddComponent<MeshRenderer>();
-        
+        FractureDebug debug = cellObj.AddComponent<FractureDebug>();
+
+        debug.SetFracturePoint(fracturePoints[meshCreated]);
+        debug.SetVoronoiCell(voronoiCells[meshCreated]);
+
         cellObj.transform.position = transform.position;
         mf.mesh = mesh;
         mr.material = GetComponent<SpriteRenderer>().material;
         mr.enabled = true;
 
         cellObj.transform.parent = fracturedParent.transform;
+
+        meshCreated++;
     }
 
     void GenerateFracturesMeshes()
@@ -209,43 +215,6 @@ public class Fracture : MonoBehaviour
         for (int i = 0; i < voronoiCells.Count; i++)
         {
             CreateMeshFromCell(voronoiCells[i]);
-        }
-    }
-
-    void OnDrawGizmos()
-    {
-        // Points Voronoï
-        Gizmos.color = Color.red;
-        foreach (Vector3 p in fracturePoints)
-        {
-            Vector3 v = p;
-
-            v.x += transform.position.x;
-            v.y += transform.position.y;
-            v.z += transform.position.z;
-
-            Gizmos.DrawSphere(v, 0.02f);
-        }
-
-        // Cellules
-        Gizmos.color = Color.green;
-        foreach (var cell in voronoiCells)
-        {
-            for (int i = 0; i < cell.Count; i++)
-            {
-                Vector3 a = cell[i];
-                Vector3 b = cell[(i + 1) % cell.Count];
-
-                a.x += transform.position.x;
-                a.y += transform.position.y;
-                a.z += transform.position.z;
-
-                b.x += transform.position.x;
-                b.y += transform.position.y;
-                b.z += transform.position.z;
-
-                Gizmos.DrawLine(a, b);
-            }
         }
     }
 }
