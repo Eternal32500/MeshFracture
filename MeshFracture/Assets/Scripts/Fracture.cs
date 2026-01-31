@@ -25,14 +25,12 @@ public class Fracture : MonoBehaviour
 
     protected void FractureNow()
     {
-        Destroy(gameObject);
         meshCreated = 0;
-
+        Destroy(gameObject);
         GetSpritePolygons();
         GenerateFracturePoints();
         ComputeVoronoiCells();
         GenerateFracturesMeshes();
-
     }
 
     void GetSpritePolygons()
@@ -183,82 +181,56 @@ public class Fracture : MonoBehaviour
     void CreateMeshFromCell(List<Vector2> cell)
     {
         Mesh mesh = new Mesh();
-        Vector3[] vertices = new Vector3[cell.Count];
+
         int[] triangles = new int[(cell.Count - 2) * 3];
-
-        for (int i = 0; i < cell.Count; i++)
-        {
-            vertices[i] = cell[i];
-        }
-
         for (int i = 0; i < cell.Count - 2; i++)
         {
             triangles[i * 3] = 0;
             triangles[i * 3 + 1] = i + 1;
             triangles[i * 3 + 2] = i + 2;
         }
+        mesh.triangles = triangles;
 
-        Vector3 meshCenter = ComputeMeshCenter(vertices);
-
-        for (int i = 0; i < vertices.Length; i++)
+        Vector2 meshCenter = ComputeMeshCenter(cell);
+        for (int i = 0; i < cell.Count; i++)
         {
-            vertices[i] -= meshCenter;
+            cell[i] -= meshCenter;
         }
 
+        Vector3[] vertices = new Vector3[cell.Count];
+        for (int i = 0; i < cell.Count; i++)
+        {
+            vertices[i] = cell[i];
+        }
         mesh.vertices = vertices;
-        mesh.triangles = triangles;
 
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();
 
         GameObject cellObj = new GameObject("FractureCell");
-        MeshFilter mf = cellObj.AddComponent<MeshFilter>();
-        MeshRenderer mr = cellObj.AddComponent<MeshRenderer>();
-        FractureDebug debug = cellObj.AddComponent<FractureDebug>();
 
+        FractureDebug debug = cellObj.AddComponent<FractureDebug>();
         debug.SetFracturePoint(fracturePoints[meshCreated]);
         debug.SetVoronoiCell(voronoiCells[meshCreated]);
 
-        cellObj.transform.position = meshCenter + transform.position;
+        MeshFilter mf = cellObj.AddComponent<MeshFilter>();
         mf.mesh = mesh;
+
+        MeshRenderer mr = cellObj.AddComponent<MeshRenderer>();
         mr.material = GetComponent<SpriteRenderer>().material;
         mr.enabled = true;
 
+        cellObj.transform.position = (Vector3)meshCenter + transform.position;
         cellObj.transform.parent = fracturedParent.transform;
 
         if(enableCollision)
-        {
-            PolygonCollider2D collider = cellObj.AddComponent<PolygonCollider2D>();
-            Vector2[] localCellCoordinates = new Vector2[cell.Count];
+            AddPolygonCollider(cellObj, cell);
 
-            for (int i = 0; i < cell.Count; i++)
-            {
-                localCellCoordinates[i] = cell[i] - (Vector2)meshCenter;
-            }
-
-            collider.SetPath(0, localCellCoordinates);
-        }
         if (enablePhysics)
             cellObj.AddComponent<Rigidbody2D>();
 
         if(enableExplosionForce)
-        {
-            Rigidbody2D rb;
-
-            if(enablePhysics)
-                rb = cellObj.GetComponent<Rigidbody2D>();
-            else
-                rb = cellObj.AddComponent<Rigidbody2D>();
-
-
-            Vector3 explosionCenter = transform.position;
-            Vector2 forceDir = cellObj.transform.position - explosionCenter;
-
-            float distance = Mathf.Max(forceDir.magnitude, 0.01f);
-            float force = explosionForce / distance;
-
-            rb.AddForce(forceDir.normalized * force, ForceMode2D.Impulse);
-        }
+            AddExplosionForce(cellObj);
 
         meshCreated++;
     }
@@ -273,13 +245,47 @@ public class Fracture : MonoBehaviour
         }
     }
 
-    Vector3 ComputeMeshCenter(Vector3[] vertices)
+    Vector2 ComputeMeshCenter(List<Vector2> vertices)
     {
-        Vector3 position = Vector3.zero;
-        for (int i = 0; i < vertices.Length; i++)
+        Vector2 position = Vector2.zero;
+        for (int i = 0; i < vertices.Count; i++)
         {
             position += vertices[i];
         }
-        return position /= vertices.Length;
+        return position /= vertices.Count;
+    }
+
+    void AddExplosionForce(GameObject cellObj)
+    {
+        Rigidbody2D rb;
+
+        if (enablePhysics)
+            rb = cellObj.GetComponent<Rigidbody2D>();
+        else
+            rb = cellObj.AddComponent<Rigidbody2D>();
+
+
+        Vector3 explosionCenter = transform.position;
+        Vector2 forceDir = cellObj.transform.position - explosionCenter;
+
+        float distance = Mathf.Max(forceDir.magnitude, 0.01f);
+        float force = explosionForce / distance;
+
+        rb.AddForce(forceDir.normalized * force, ForceMode2D.Impulse);
+    }
+
+    void AddPolygonCollider(GameObject cellObj, List<Vector2> cell)
+    {
+        PolygonCollider2D collider = cellObj.AddComponent<PolygonCollider2D>();
+
+        Vector2[] vertices2D = new Vector2[cell.Count];
+        Vector3[] vertices = cellObj.GetComponent<MeshFilter>().mesh.vertices;
+
+        for (int i = 0; i < cell.Count; i++)
+        {
+            vertices2D[i] = vertices[i];
+        }
+
+        collider.SetPath(0, vertices2D);
     }
 }
