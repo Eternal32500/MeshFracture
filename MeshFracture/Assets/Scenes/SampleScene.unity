@@ -555,8 +555,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FractureOnCollision
   randomPoints: 1
-  fractureCount: 600
-  randomSeed: 0
+  fractureCount: 200
+  seed: 0
+  enablePhysics: 1
+  enableCollision: 1
+  enableExplosionForce: 1
+  explosionForce: 2
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0

@@ -182,15 +182,6 @@ public class Fracture : MonoBehaviour
     {
         Mesh mesh = new Mesh();
 
-        int[] triangles = new int[(cell.Count - 2) * 3];
-        for (int i = 0; i < cell.Count - 2; i++)
-        {
-            triangles[i * 3] = 0;
-            triangles[i * 3 + 1] = i + 1;
-            triangles[i * 3 + 2] = i + 2;
-        }
-        mesh.triangles = triangles;
-
         Vector2 meshCenter = ComputeMeshCenter(cell);
         for (int i = 0; i < cell.Count; i++)
         {
@@ -204,13 +195,22 @@ public class Fracture : MonoBehaviour
         }
         mesh.vertices = vertices;
 
+        int[] triangles = new int[(cell.Count - 2) * 3];
+        for (int i = 0; i < cell.Count - 2; i++)
+        {
+            triangles[i * 3] = 0;
+            triangles[i * 3 + 1] = i + 1;
+            triangles[i * 3 + 2] = i + 2;
+        }
+        mesh.triangles = triangles;
+
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();
 
         GameObject cellObj = new GameObject("FractureCell");
 
         FractureDebug debug = cellObj.AddComponent<FractureDebug>();
-        debug.SetFracturePoint(fracturePoints[meshCreated]);
+        debug.SetFracturePoint(cellObj.transform.position);
         debug.SetVoronoiCell(voronoiCells[meshCreated]);
 
         MeshFilter mf = cellObj.AddComponent<MeshFilter>();
