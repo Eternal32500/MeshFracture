@@ -7,7 +7,13 @@ public class Fracture : MonoBehaviour
     [Header("Fracture Settings")]
     [SerializeField] private bool randomPoints = true;
     [SerializeField] private int fractureCount = 10;
-    [SerializeField] private int randomSeed = 0;
+    [SerializeField] private int seed = 0;
+
+    [Header("Physics Settings")]
+    [SerializeField] private bool enablePhysics = true;
+    [SerializeField] private bool enableCollision = true;
+    [SerializeField] private bool enableExplosionForce = true;
+    [SerializeField] private float explosionForce = 2f;
 
     private Sprite sprite;
     private int meshCreated = 0;
@@ -19,6 +25,7 @@ public class Fracture : MonoBehaviour
 
     protected void FractureNow()
     {
+        Destroy(gameObject);
         meshCreated = 0;
 
         GetSpritePolygons();
@@ -26,7 +33,6 @@ public class Fracture : MonoBehaviour
         ComputeVoronoiCells();
         GenerateFracturesMeshes();
 
-        Destroy(gameObject);
     }
 
     void GetSpritePolygons()
@@ -56,7 +62,7 @@ public class Fracture : MonoBehaviour
             Random.InitState(seed);
         }
         else
-            Random.InitState(randomSeed);
+            Random.InitState(seed);
 
         while (fracturePoints.Count < fractureCount)
         {
@@ -220,9 +226,9 @@ public class Fracture : MonoBehaviour
 
         cellObj.transform.parent = fracturedParent.transform;
 
-        PolygonCollider2D col = cellObj.AddComponent<PolygonCollider2D>();
-        col.SetPath(0, cell);
-        cellObj.AddComponent<Rigidbody2D>();
+        if(enableCollision)
+        {
+            PolygonCollider2D collider = cellObj.AddComponent<PolygonCollider2D>();
             Vector2[] localCellCoordinates = new Vector2[cell.Count];
 
             for (int i = 0; i < cell.Count; i++)
@@ -231,6 +237,28 @@ public class Fracture : MonoBehaviour
             }
 
             collider.SetPath(0, localCellCoordinates);
+        }
+        if (enablePhysics)
+            cellObj.AddComponent<Rigidbody2D>();
+
+        if(enableExplosionForce)
+        {
+            Rigidbody2D rb;
+
+            if(enablePhysics)
+                rb = cellObj.GetComponent<Rigidbody2D>();
+            else
+                rb = cellObj.AddComponent<Rigidbody2D>();
+
+
+            Vector3 explosionCenter = transform.position;
+            Vector2 forceDir = cellObj.transform.position - explosionCenter;
+
+            float distance = Mathf.Max(forceDir.magnitude, 0.01f);
+            float force = explosionForce / distance;
+
+            rb.AddForce(forceDir.normalized * force, ForceMode2D.Impulse);
+        }
 
         meshCreated++;
     }
