@@ -191,7 +191,14 @@ public class Fracture : MonoBehaviour
             triangles[i * 3 + 1] = i + 1;
             triangles[i * 3 + 2] = i + 2;
         }
-        
+
+        Vector3 meshCenter = ComputeMeshCenter(vertices);
+
+        for (int i = 0; i < vertices.Length; i++)
+        {
+            vertices[i] -= meshCenter;
+        }
+
         mesh.vertices = vertices;
         mesh.triangles = triangles;
 
@@ -206,7 +213,7 @@ public class Fracture : MonoBehaviour
         debug.SetFracturePoint(fracturePoints[meshCreated]);
         debug.SetVoronoiCell(voronoiCells[meshCreated]);
 
-        cellObj.transform.position = transform.position;
+        cellObj.transform.position = meshCenter + transform.position;
         mf.mesh = mesh;
         mr.material = GetComponent<SpriteRenderer>().material;
         mr.enabled = true;
@@ -216,6 +223,14 @@ public class Fracture : MonoBehaviour
         PolygonCollider2D col = cellObj.AddComponent<PolygonCollider2D>();
         col.SetPath(0, cell);
         cellObj.AddComponent<Rigidbody2D>();
+            Vector2[] localCellCoordinates = new Vector2[cell.Count];
+
+            for (int i = 0; i < cell.Count; i++)
+            {
+                localCellCoordinates[i] = cell[i] - (Vector2)meshCenter;
+            }
+
+            collider.SetPath(0, localCellCoordinates);
 
         meshCreated++;
     }
@@ -228,5 +243,15 @@ public class Fracture : MonoBehaviour
         {
             CreateMeshFromCell(voronoiCells[i]);
         }
+    }
+
+    Vector3 ComputeMeshCenter(Vector3[] vertices)
+    {
+        Vector3 position = Vector3.zero;
+        for (int i = 0; i < vertices.Length; i++)
+        {
+            position += vertices[i];
+        }
+        return position /= vertices.Length;
     }
 }
