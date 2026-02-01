@@ -15,6 +15,12 @@ public class Fracture : MonoBehaviour
     [SerializeField] private bool enableExplosionForce = true;
     [SerializeField] private float explosionForce = 2f;
 
+    [Header("Localized Fracture Settings")]
+    [SerializeField] private bool localizedFracture = false;
+    [SerializeField] private Vector2 localizedFracturePoint = Vector2.zero;
+    [SerializeField] private int localizedFractureCount = 5;
+    [SerializeField] private float localizedMaxDistance = 2f;
+    [SerializeField] private float localizedFalloff = 2.5f;
     private Sprite sprite;
     private int meshCreated = 0;
 
@@ -72,6 +78,36 @@ public class Fracture : MonoBehaviour
             if (PointInPolygon(p, spritePolygon))
                 fracturePoints.Add(p);
         }
+
+        if (localizedFracture)
+        {
+            if (!PointInPolygon(localizedFracturePoint, spritePolygon))
+            {
+                Debug.LogWarning(
+                    $"[Fracture] Localized fracture point is outside sprite mesh: {localizedFracturePoint}"
+                );
+                return;
+            }
+
+            int added = 0;
+
+            while (added < localizedFractureCount)
+            {
+                Vector2 dir = Random.insideUnitCircle.normalized;
+
+                float t = Mathf.Pow(Random.value, localizedFalloff);
+                float distance = t * localizedMaxDistance;
+
+                Vector2 p = localizedFracturePoint + dir * distance;
+
+                if (PointInPolygon(p, spritePolygon))
+                {
+                    fracturePoints.Add(p);
+                    added++;
+                }
+            }
+        }
+
     }
 
     Bounds ComputeLocalBounds(List<Vector2> poly)
