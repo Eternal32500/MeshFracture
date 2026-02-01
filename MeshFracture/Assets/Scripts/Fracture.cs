@@ -18,7 +18,7 @@ public class Fracture : MonoBehaviour
 
     [Header("Localized Fracture Settings")]
     [SerializeField] private bool localizedFracture = false;
-    [SerializeField] private Vector2 localizedFracturePoint = Vector2.zero;
+    [SerializeField] protected Vector2 localizedFracturePoint = Vector2.zero;
     [SerializeField] private int localizedFractureCount = 5;
     [SerializeField] private float localizedMaxDistance = 2f;
     [SerializeField] private float localizedFalloff = 2.5f;
@@ -27,6 +27,8 @@ public class Fracture : MonoBehaviour
     [SerializeField] private float minPolygonArea = 0.005f;
     [SerializeField] private bool destroyAfterTime = true;
     [SerializeField] private float destroyTime = 5f;
+
+    protected bool checkIsInside = true;
 
     private Sprite sprite;
     private int meshCreated = 0;
@@ -88,12 +90,15 @@ public class Fracture : MonoBehaviour
 
         if (localizedFracture)
         {
-            if (!PointInPolygon(localizedFracturePoint, spritePolygon))
+            if(checkIsInside)
             {
-                Debug.LogWarning(
-                    $"[Fracture] Localized fracture point is outside sprite mesh: {localizedFracturePoint}"
-                );
-                return;
+                if (!PointInPolygon(localizedFracturePoint, spritePolygon))
+                {
+                    Debug.LogWarning(
+                        $"[Fracture] Localized fracture point is outside sprite mesh: {localizedFracturePoint}"
+                    );
+                    return;
+                }
             }
 
             int added = 0;
