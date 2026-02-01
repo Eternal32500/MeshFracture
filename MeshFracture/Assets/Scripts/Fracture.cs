@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -21,6 +22,12 @@ public class Fracture : MonoBehaviour
     [SerializeField] private int localizedFractureCount = 5;
     [SerializeField] private float localizedMaxDistance = 2f;
     [SerializeField] private float localizedFalloff = 2.5f;
+
+    [Header("Little Fracture Mesh Settings")]
+    [SerializeField] private float minPolygonArea = 0.005f;
+    [SerializeField] private bool destroyAfterTime = true;
+    [SerializeField] private float destroyTime = 5f;
+
     private Sprite sprite;
     private int meshCreated = 0;
 
@@ -245,10 +252,6 @@ public class Fracture : MonoBehaviour
 
         GameObject cellObj = new GameObject("FractureCell");
 
-        FractureDebug debug = cellObj.AddComponent<FractureDebug>();
-        debug.SetFracturePoint(cellObj.transform.position);
-        debug.SetVoronoiCell(voronoiCells[meshCreated]);
-
         MeshFilter mf = cellObj.AddComponent<MeshFilter>();
         mf.mesh = mesh;
 
@@ -256,11 +259,25 @@ public class Fracture : MonoBehaviour
         mr.material = GetComponent<SpriteRenderer>().material;
         mr.enabled = true;
 
+        if(enableCollision)
+        {
+            if(ComputePolygonArea(cell.ToArray()) > minPolygonArea)
+                AddPolygonCollider(cellObj, cell);  
+            else
+            {
+                if(destroyAfterTime)
+                {
+                    cellObj.AddComponent<FractureDie>().timeToDie = destroyTime;
+                }
+            }
+        }
+
+        FractureDebug debug = cellObj.AddComponent<FractureDebug>();
+        debug.SetFracturePoint(cellObj.transform.position);
+        debug.SetVoronoiCell(voronoiCells[meshCreated]);
+
         cellObj.transform.position = (Vector3)meshCenter + transform.position;
         cellObj.transform.parent = fracturedParent.transform;
-
-        if(enableCollision)
-            AddPolygonCollider(cellObj, cell);
 
         if (enablePhysics)
             cellObj.AddComponent<Rigidbody2D>();
@@ -269,6 +286,18 @@ public class Fracture : MonoBehaviour
             AddExplosionForce(cellObj);
 
         meshCreated++;
+    }
+
+    float ComputePolygonArea(Vector2[] points)
+    {
+        float aire = 0f;
+        for (int i = 0; i < points.Length; i++)
+        {
+            Vector2 p1 = points[i];
+            Vector2 p2 = points[(i + 1) % points.Length];
+            aire += (p1.x * p2.y) - (p2.x * p1.y);
+        }
+        return Mathf.Abs(aire) / 2f;
     }
 
     void GenerateFracturesMeshes()
