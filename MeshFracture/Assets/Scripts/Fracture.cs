@@ -352,5 +352,23 @@ public class Fracture : MonoBehaviour
         }
 
         collider.SetPath(0, vertices2D);
+        ScalePolygonCollider(collider, 0.95f);
+    }
+
+    void ScalePolygonCollider(PolygonCollider2D collider, float scale)
+    {
+        Vector2[] points = collider.GetPath(0);
+
+        Vector2 center = Vector2.zero;
+        foreach (var p in points)
+            center += p;
+        center /= points.Length;
+
+        for (int i = 0; i < points.Length; i++)
+        {
+            points[i] = center + (points[i] - center) * scale;
+        }
+
+        collider.SetPath(0, points);
     }
 }
