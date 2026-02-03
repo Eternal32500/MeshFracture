@@ -13,9 +13,10 @@ public class Fracture : MonoBehaviour
     [Header("Physics Settings")]
     [SerializeField] private bool enablePhysics = true;
     [SerializeField] private bool enableCollision = true;
+    [SerializeField] private bool useAutoMass = true;
     [SerializeField] private bool enableExplosionForce = true;
     [SerializeField] private float explosionForce = 2f;
-    [SerializeField] private bool useAutoMass = true;
+    [SerializeField] protected Vector2 explosionOrigin = Vector2.zero;
 
     [Header("Localized Fracture Settings")]
     [SerializeField] private bool localizedFracture = false;
@@ -336,10 +337,10 @@ public class Fracture : MonoBehaviour
             rb = cellObj.AddComponent<Rigidbody2D>();
 
         rb.useAutoMass = useAutoMass;
-        Vector3 explosionCenter = transform.position;
-        Vector2 forceDir = cellObj.transform.position - explosionCenter;
 
-        float distance = Mathf.Max(forceDir.magnitude, 0.01f);
+        Vector2 forceDir = (Vector2)cellObj.transform.position - explosionOrigin;
+
+        float distance = Mathf.Max(forceDir.magnitude, 0.001f);
         float force = explosionForce / distance;
 
         rb.AddForce(forceDir.normalized * force, ForceMode2D.Impulse);

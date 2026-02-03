@@ -1605,7 +1605,7 @@ GameObject:
   - component: {fileID: 1073913990}
   - component: {fileID: 1073913989}
   m_Layer: 0
-  m_Name: SceneSwitcher
+  m_Name: InputScenes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

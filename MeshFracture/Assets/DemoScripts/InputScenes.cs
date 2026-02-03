@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class SwitcherScene : MonoBehaviour
+public class InputScenes : MonoBehaviour
 {
-    public static SwitcherScene Instance { get; private set; }
+    public static InputScenes Instance { get; private set; }
 
     private int sceneIndex = 1;
     private int maxSceneIndex;
@@ -24,7 +24,6 @@ public class SwitcherScene : MonoBehaviour
     private void Start()
     {
         maxSceneIndex = UnityEngine.SceneManagement.SceneManager.sceneCount;
-        Debug.Log("Max Scene Index: " + maxSceneIndex);
     }
     void Update()
     {
@@ -34,7 +33,6 @@ public class SwitcherScene : MonoBehaviour
                 sceneIndex = 0;
 
             UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Scene" + sceneIndex);
-            Debug.Log("Loading Scene" + sceneIndex);
             sceneIndex++;
         }
 
@@ -44,9 +42,12 @@ public class SwitcherScene : MonoBehaviour
                 sceneIndex = maxSceneIndex;
 
             UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Scene" + sceneIndex);
-            Debug.Log("Loading Scene" + sceneIndex);
             sceneIndex--;
         }
 
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Scene" + (sceneIndex - 1));
+        }
     }
 }
