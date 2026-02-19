@@ -4,7 +4,7 @@ public class InputScenes : MonoBehaviour
 {
     public static InputScenes Instance { get; private set; }
 
-    private int sceneIndex = 1;
+    private int sceneIndex;
     private int maxSceneIndex;
 
     void Awake()
@@ -24,28 +24,29 @@ public class InputScenes : MonoBehaviour
     private void Start()
     {
         maxSceneIndex = UnityEngine.SceneManagement.SceneManager.sceneCount;
+        sceneIndex = 1;
     }
     void Update()
     {
         if(Input.GetKeyDown(KeyCode.RightArrow))
         {
-            if (sceneIndex > maxSceneIndex)
-                sceneIndex = 0;
-
             UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Scene" + sceneIndex);
             sceneIndex++;
+            
+            if (sceneIndex > maxSceneIndex)
+                sceneIndex = 0;
         }
 
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            if (sceneIndex < 0)
-                sceneIndex = maxSceneIndex;
-
             UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Scene" + sceneIndex);
             sceneIndex--;
+           
+            if (sceneIndex < 0)
+                sceneIndex = maxSceneIndex;
         }
 
-        if(Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R))
         {
             UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Scene" + (sceneIndex - 1));
         }

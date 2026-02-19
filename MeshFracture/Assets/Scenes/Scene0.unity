@@ -483,7 +483,7 @@ Transform:
   m_GameObject: {fileID: 387378904}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.12, y: 3.1, z: 0}
+  m_LocalPosition: {x: -0.09, y: 0.12, z: 0}
   m_LocalScale: {x: 1.9217602, y: 1.9217602, z: 1.9217602}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -569,9 +569,10 @@ MonoBehaviour:
   seed: 0
   enablePhysics: 1
   enableCollision: 1
-  enableExplosionForce: 1
-  explosionForce: 1.37
   useAutoMass: 0
+  enableExplosionForce: 1
+  explosionForce: 7.17
+  explosionOrigin: {x: 0, y: 0}
   localizedFracture: 0
   localizedFracturePoint: {x: 0, y: 0}
   localizedFractureCount: 5
@@ -727,9 +728,10 @@ MonoBehaviour:
   seed: 0
   enablePhysics: 1
   enableCollision: 1
+  useAutoMass: 1
   enableExplosionForce: 0
   explosionForce: 1.8
-  useAutoMass: 1
+  explosionOrigin: {x: 0, y: 0}
   localizedFracture: 1
   localizedFracturePoint: {x: 0, y: 0}
   localizedFractureCount: 106
@@ -1130,37 +1132,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2035119468}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &633712104
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 633712105}
-  m_Layer: 0
-  m_Name: GameObject
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &633712105
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 633712104}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.48706, y: 0.76613, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &671432838
 GameObject:
@@ -1794,9 +1765,10 @@ MonoBehaviour:
   seed: 0
   enablePhysics: 1
   enableCollision: 1
+  useAutoMass: 1
   enableExplosionForce: 0
   explosionForce: 1.8
-  useAutoMass: 1
+  explosionOrigin: {x: 0, y: 0}
   localizedFracture: 1
   localizedFracturePoint: {x: 0, y: 0}
   localizedFractureCount: 76
@@ -2269,5 +2241,4 @@ SceneRoots:
   - {fileID: 387378907}
   - {fileID: 671432842}
   - {fileID: 1777946667}
-  - {fileID: 633712105}
   - {fileID: 1073913990}

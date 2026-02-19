@@ -295,7 +295,7 @@ MonoBehaviour:
   enableCollision: 1
   useAutoMass: 0
   enableExplosionForce: 1
-  explosionForce: 5
+  explosionForce: 0.26
   explosionOrigin: {x: 0, y: 0}
   localizedFracture: 1
   localizedFracturePoint: {x: 0, y: 0}
