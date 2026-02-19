@@ -338,7 +338,7 @@ public class Fracture : MonoBehaviour
 
         rb.useAutoMass = useAutoMass;
 
-        Vector2 forceDir = (Vector2)cellObj.transform.position - explosionOrigin;
+        Vector2 forceDir = (Vector2)cellObj.transform.position - (Vector2)gameObject.transform.position - explosionOrigin;
         float distance = Mathf.Max(forceDir.magnitude, 0.001f);
         float force = explosionForce / distance;
 
