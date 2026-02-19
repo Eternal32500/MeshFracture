@@ -17,7 +17,7 @@ public class FractureOnMouse : Fracture
         if (hit.collider.gameObject == this.gameObject)
         {
             localizedFracturePoint = hit.point - (Vector2)transform.position;
-            explosionOrigin = hit.point;
+            explosionOrigin = hit.point - (Vector2)transform.position;
             FractureNow();
         }
     }
