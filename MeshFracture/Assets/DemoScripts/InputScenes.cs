@@ -24,31 +24,36 @@ public class InputScenes : MonoBehaviour
     private void Start()
     {
         maxSceneIndex = UnityEngine.SceneManagement.SceneManager.sceneCount;
-        sceneIndex = 1;
+        sceneIndex = 0;
     }
     void Update()
     {
         if(Input.GetKeyDown(KeyCode.RightArrow))
         {
-            UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Scene" + sceneIndex);
             sceneIndex++;
-            
+
             if (sceneIndex > maxSceneIndex)
                 sceneIndex = 0;
+
+            UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Scene" + sceneIndex);
+            Debug.Log("New game Scene : " + sceneIndex);
         }
 
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Scene" + sceneIndex);
             sceneIndex--;
-           
+
             if (sceneIndex < 0)
                 sceneIndex = maxSceneIndex;
+
+            UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Scene" + sceneIndex);
+            Debug.Log("New game Scene : " + sceneIndex);
         }
 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Scene" + (sceneIndex - 1));
+            Debug.Log("Reload : " + sceneIndex);
+            UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Scene" + (sceneIndex));
         }
     }
 }
